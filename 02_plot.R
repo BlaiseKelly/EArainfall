@@ -147,7 +147,13 @@ for (yr in yrz){
   print(nam)
 }
 
-full_rear_rast <- brick(rast_dat)  
+full_yr_rast <- brick(rast_dat)  
+
+## define breaks for wind speeds
+rain_bks <- c(seq(from = 0, to = 2000, by = 100), 5000)
+
+## define palette for wind speed
+rain_pal <- pals::jet(NROW(rain_bks))
 
 ## create tmap of raster and shape file
 all_tmz <- list()
@@ -164,11 +170,12 @@ for (yr in yrz){
   all_tmz[[nam]] <- p1
 }
 
-leg <- tm_shape(subset(all_rast,13)) +
+all_tmz[["legend"]] <- tm_shape(subset(full_yr_rast,13)) +
   tm_raster(palette = rain_pal, breaks = rain_bks, title = '\nTotal rainfall (mm)\nfor each year\nin England')+
   tm_layout(legend.only = TRUE)
 
-t2 <- tmap_arrange(all_tmz, leg)
+t2 <- tmap_arrange(all_tmz)
+
 tmap_save(t2, "plots/total.png", width = 10000, height = 6000, dpi = 1000)
 
 
